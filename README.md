@@ -4,9 +4,7 @@
 
 Workout builder is a desktop application for building custom workouts with Tkinter
 
-<img src="/img/kell-shell.gif" width="400">
-
-[Try it on repli.it!](https://repl.it/@kelleyneubauer/kell-shell)
+<img src="/img/workout_builder_screenshot.png" width="400">
 
 ---
 
@@ -23,7 +21,7 @@ Workout builder is a desktop application for building custom workouts with Tkint
 **How to run:**
 
 1. Navigate to src folder folder using `cd src`
-2. To run, type `python3 workout_builder.py` \
+2. To run, type `python3 workout_builder.py`
 3. Tkinter GUI window will automatically open
 4. To end program, close the GUI window
 
@@ -60,6 +58,7 @@ block number,exercise number,block name,classification,exercise name,sets,reps,i
 **JSON input format:**
 
 dataset must be called `exercise_db.json`
+the key must be called `exercises` may contain any number of exercises in the following format
 ```
 {
 	"exercises": {
