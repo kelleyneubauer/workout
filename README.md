@@ -4,7 +4,7 @@
 
 Workout builder is a desktop application for building custom workouts with Tkinter
 
-<img src="/img/workout_builder_screenshot.png">
+<img src="/img/workout_builder_load_and_video.gif">
 
 ---
 
