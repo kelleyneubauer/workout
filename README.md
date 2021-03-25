@@ -4,7 +4,7 @@
 
 Workout builder is a desktop application for building custom workouts with Tkinter
 
-<img src="/img/workout_builder_screenshot.png" width="400">
+<img src="/img/workout_builder_load_and_video.gif">
 
 ---
 
@@ -12,6 +12,7 @@ Workout builder is a desktop application for building custom workouts with Tkint
 
 - Dynamically add/remove exercises at runtime
 - Save and load workouts in CSV format
+- Use CSV to create pretty programs in excel (template included!)
 - Populate comboboxes using JSON dataset
 - Validates exercises by category selected
 - Opens demo video link in web browser
