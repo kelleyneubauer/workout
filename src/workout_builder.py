@@ -83,11 +83,9 @@ class View:
     def remove_last_block(self):
         if self._exercise_blocks:
             last_block = self._exercise_blocks.pop()
+            while last_block._exercises:
+                last_block.remove_last_exercise()
             last_block.destroy_widgets()
-            # for widget in last_block.get_frame().winfo_children():
-            #     widget.destroy()
-            # last_block.get_frame().grid_forget()
-            # last_block.get_frame().destroy()
 
     def get_last_block(self):
         if self._exercise_blocks:
@@ -148,9 +146,8 @@ class ExerciseBlock:
         self._exercises = []
 
     def destroy_widgets(self):
-        for exercise in self._exercises:
-            exercise.destroy_widgets()
-
+        while self._exercises:
+            self.remove_last_exercise()
         for frame in self._frm.winfo_children():
             for widget in frame.winfo_children():
                 widget.grid_forget()
@@ -366,27 +363,18 @@ class Controller:
 
     def _remove_all_blocks(self):
         while self.view.get_blocks():
-            last_block = self.view.get_last_block()
-            self._remove_all_exercises_in_block(last_block)
-            self.view._remove_last_block()
-
-        for block in self.view.exercise_blocks:
-            self._remove_all_exercises_in_block(block)
-        while self.view.exercise_blocks:
             self.view.remove_last_block()
-
-    def _remove_all_exercises_in_block(self, block):
-        while block.get_exercises():
-            block.remove_last_exercise()
 
     def _classification_onclick(self, event, exercise):
         exercise.set_name_text('')
         exercise.set_link_text('')
-        exercise.set_name_values(self.model.get_exercises_of_category(exercise.get_classification_text()))
+        exercise.set_name_values(self.model.get_exercises_of_category(
+                                            exercise.get_classification_text()))
 
     def _exercise_name_onclick(self, event, exercise):
         exercise.set_link_text('')
-        exercise.set_link_values(self.model.get_exercise_video_links(exercise.get_name_text()))
+        exercise.set_link_values(self.model.get_exercise_video_links(
+                                                    exercise.get_name_text()))
 
     def _view_onclick(self, event, exercise):
         webbrowser.open_new(exercise.get_link_text())
