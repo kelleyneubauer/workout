@@ -57,66 +57,66 @@ class View:
 
         self._frm_header = tk.Frame(master=self._frm)
         self._frm_header.grid(row=0, column=0, sticky='w')
-        self.lbl_header = tk.Label(master=self._frm_header, text='Workout Name: ',  width=12, anchor='w')
-        self.lbl_header.grid(row=0, column=0, sticky='w')
-        self.ent_header_name = tk.Entry(master=self._frm_header)
-        self.ent_header_name.grid(row=0, column=1, sticky='w')
+        self._lbl_header = tk.Label(master=self._frm_header, text='Workout Name: ',  width=12, anchor='w')
+        self._lbl_header.grid(row=0, column=0, sticky='w')
+        self._ent_header_name = tk.Entry(master=self._frm_header)
+        self._ent_header_name.grid(row=0, column=1, sticky='w')
 
-        self.btn_remove_block = tk.Button(master=self._frm_header, text='-', width=1)
-        self.btn_remove_block.grid(row=0, column=2)
-        self.btn_add_block = tk.Button(master=self._frm_header, text='+', width=1)
-        self.btn_add_block.grid(row=0, column=3)
+        self._btn_remove_block = tk.Button(master=self._frm_header, text='-', width=1)
+        self._btn_remove_block.grid(row=0, column=2)
+        self._btn_add_block = tk.Button(master=self._frm_header, text='+', width=1)
+        self._btn_add_block.grid(row=0, column=3)
 
-        self.btn_save = tk.Button(master=self._frm_header, text='save', width=3)
-        self.btn_save.grid(row=0, column=4, padx=(500, 0))
-        self.btn_load = tk.Button(master=self._frm_header, text='load', width=3)
-        self.btn_load.grid(row=0, column=5)
+        self._btn_save = tk.Button(master=self._frm_header, text='save', width=3)
+        self._btn_save.grid(row=0, column=4, padx=(500, 0))
+        self._btn_load = tk.Button(master=self._frm_header, text='load', width=3)
+        self._btn_load.grid(row=0, column=5)
 
-        self.exercise_blocks = []
+        self._exercise_blocks = []
 
     def add_block(self, quantity=1, exercises=0):
         for x in range(0, quantity):
-            self.exercise_blocks.append(ExerciseBlock(self._frm, len(self.exercise_blocks) + 1))
+            self._exercise_blocks.append(ExerciseBlock(self._frm, len(self._exercise_blocks) + 1))
             if exercises:
-                self.exercise_blocks[len(self.exercise_blocks) - 1].add_exercise(exercises)
+                self._exercise_blocks[len(self._exercise_blocks) - 1].add_exercise(exercises)
 
     def remove_last_block(self):
-        if self.exercise_blocks:
-            last_block = self.exercise_blocks.pop()
-            for widget in last_block.frm.winfo_children():
-                widget.destroy()
-            last_block.frm.grid_forget()
-            last_block.frm.destroy()
+        if self._exercise_blocks:
+            last_block = self._exercise_blocks.pop()
+            last_block.destroy_widgets()
+            # for widget in last_block.get_frame().winfo_children():
+            #     widget.destroy()
+            # last_block.get_frame().grid_forget()
+            # last_block.get_frame().destroy()
 
     def get_last_block(self):
-        if self.exercise_blocks:
-            return self.exercise_blocks[-1]
+        if self._exercise_blocks:
+            return self._exercise_blocks[-1]
         return None
 
     def get_add_block_widget(self):
-        return self.btn_add_block
+        return self._btn_add_block
 
     def get_remove_block_widget(self):
-        return self.btn_remove_block
+        return self._btn_remove_block
 
     def get_save_widget(self):
-        return self.btn_save
+        return self._btn_save
 
     def get_load_widget(self):
-        return self.btn_load
+        return self._btn_load
 
     def get_workout_name(self):
-        return self.ent_header_name.get()
+        return self._ent_header_name.get()
 
     def get_blocks(self):
-        return self.exercise_blocks
+        return self._exercise_blocks
 
 
 class ExerciseBlock:
     labels = [('classification', 22), ('exercise name', 37), ('sets', 7), ('reps', 7), ('intensity', 7), ('video link', 22)]
 
     def __init__(self, master, block_num):
-
         self._frm = tk.Frame(master=master)
         self._frm.grid(row=block_num, column=0, sticky='w', pady=(20, 0))
 
@@ -147,6 +147,19 @@ class ExerciseBlock:
 
         self._exercises = []
 
+    def destroy_widgets(self):
+        for exercise in self._exercises:
+            exercise.destroy_widgets()
+
+        for frame in self._frm.winfo_children():
+            for widget in frame.winfo_children():
+                widget.grid_forget()
+                widget.destroy()
+            frame.grid_forget()
+            frame.destroy()
+        self._frm.grid_forget()
+        self._frm.destroy()
+
     def add_exercise(self, quantity=1):
         for x in range(0, quantity):
             self._exercises.append(Exercise(self._frm_body, len(self._exercises) + 1))
@@ -154,10 +167,10 @@ class ExerciseBlock:
     def remove_last_exercise(self):
         if self._exercises:
             last_exercise = self._exercises.pop()
-            for widget in last_exercise.frm.winfo_children():
-                widget.destroy()
-            last_exercise.frm.grid_forget()
-            last_exercise.frm.destroy()
+            last_exercise.destroy_widgets()
+
+    def get_frame(self):
+        return self._frm
 
     def get_exercises(self):
         return self._exercises
@@ -189,61 +202,66 @@ class Exercise:
         self._cmb_classification = ttk.Combobox(master=self._frm, width=20)
         self._cmb_classification.grid(row=0, column=0, sticky='w')
 
-        self.cmb_exercise_name = ttk.Combobox(master=self._frm, width=35)
-        self.cmb_exercise_name.grid(row=0, column=1, sticky='w')
+        self._cmb_exercise_name = ttk.Combobox(master=self._frm, width=35)
+        self._cmb_exercise_name.grid(row=0, column=1, sticky='w')
 
-        self.spn_sets = tk.Spinbox(master=self._frm, from_=0, to=99999, width=5)
-        self.spn_sets.grid(row=0, column=2, sticky='w')
+        self._spn_sets = tk.Spinbox(master=self._frm, from_=0, to=99999, width=5)
+        self._spn_sets.grid(row=0, column=2, sticky='w')
 
-        self.spn_reps = tk.Spinbox(master=self._frm, from_=0, to=99999, width=5)
-        self.spn_reps.grid(row=0, column=3)
+        self._spn_reps = tk.Spinbox(master=self._frm, from_=0, to=99999, width=5)
+        self._spn_reps.grid(row=0, column=3)
 
-        self.spn_intensity = tk.Spinbox(master=self._frm, from_=0, to=100, width=5)
-        self.spn_intensity.grid(row=0, column=4)
+        self._spn_intensity = tk.Spinbox(master=self._frm, from_=0, to=100, width=5)
+        self._spn_intensity.grid(row=0, column=4)
 
-        self.cmb_video_link = ttk.Combobox(master=self._frm, width=20)
-        self.cmb_video_link.grid(row=0, column=5, sticky='w')
+        self._cmb_video_link = ttk.Combobox(master=self._frm, width=20)
+        self._cmb_video_link.grid(row=0, column=5, sticky='w')
 
-        self.btn_view_link = tk.Button(master=self._frm, text='view')
-        self.btn_view_link.grid(row=0, column=6, sticky='w')
+        self._btn_view_link = tk.Button(master=self._frm, text='view')
+        self._btn_view_link.grid(row=0, column=6, sticky='w')
 
-        self.btn_clear = tk.Button(master=self._frm, text='clear')
-        self.btn_clear.grid(row=0, column=7, sticky='w')
+        self._btn_clear = tk.Button(master=self._frm, text='clear')
+        self._btn_clear.grid(row=0, column=7, sticky='w')
+
+    def destroy_widgets(self):
+        for widget in self._frm.winfo_children():
+            widget.grid_forget()
+            widget.destroy()
+        self._frm.grid_forget()
+        self._frm.destroy()
 
     def get_classification_text(self):
         return self._cmb_classification.get()
-        # return self.exercise_widgets['classification'].get()
 
     def get_classification_widget(self):
         return self._cmb_classification
-        # return self.exercise_widgets['classification']
 
     def get_name_text(self):
-        return self.cmb_exercise_name.get()
+        return self._cmb_exercise_name.get()
 
     def get_name_widget(self):
-        return self.cmb_exercise_name
+        return self._cmb_exercise_name
 
     def get_sets_text(self):
-        return self.spn_sets.get()
+        return self._spn_sets.get()
 
     def get_reps_text(self):
-        return self.spn_reps.get()
+        return self._spn_reps.get()
 
     def get_intensity_text(self):
-        return self.spn_intensity.get()
+        return self._spn_intensity.get()
 
     def get_link_text(self):
-        return self.cmb_video_link.get()
+        return self._cmb_video_link.get()
 
     def get_link_widget(self):
-        return self.cmb_video_link
+        return self._cmb_video_link
 
     def get_view_link_widget(self):
-        return self.btn_view_link
+        return self._btn_view_link
 
     def get_clear_widget(self):
-        return self.btn_clear
+        return self._btn_clear
 
     def set_classification_text(self, value):
         self._cmb_classification.set(value)
@@ -252,29 +270,29 @@ class Exercise:
         self._cmb_classification['values'] = values
 
     def set_name_text(self, value):
-        self.cmb_exercise_name.set(value)
+        self._cmb_exercise_name.set(value)
 
     def set_name_values(self, values):
-        self.cmb_exercise_name['values'] = values
+        self._cmb_exercise_name['values'] = values
 
     def set_sets_text(self, value):
-        self.spn_sets.delete(0, 'end')
-        self.spn_sets.insert(0, value)
+        self._spn_sets.delete(0, 'end')
+        self._spn_sets.insert(0, value)
 
     def set_reps_text(self, value):
-        self.spn_reps.delete(0, 'end')
-        self.spn_reps.insert(0, value)
+        self._spn_reps.delete(0, 'end')
+        self._spn_reps.insert(0, value)
 
     def set_intensity_text(self, value):
-        self.spn_intensity.delete(0, 'end')
-        self.spn_intensity.insert(0, value)
+        self._spn_intensity.delete(0, 'end')
+        self._spn_intensity.insert(0, value)
 
     def set_link_text(self, value):
-        self.cmb_video_link.set(value)
+        self._cmb_video_link.set(value)
 
     def set_link_values(self, values):
-        self.cmb_video_link['values'] = values
-        self._show_first_combo_value(self.cmb_video_link)
+        self._cmb_video_link['values'] = values
+        self._show_first_combo_value(self._cmb_video_link)
 
     def _show_first_combo_value(self, combobox):
         if combobox['values']:
@@ -347,13 +365,17 @@ class Controller:
         self.view.remove_last_block()
 
     def _remove_all_blocks(self):
+        while self.view.get_blocks():
+            last_block = self.view.get_last_block()
+            self._remove_all_exercises_in_block(last_block)
+            self.view._remove_last_block()
+
         for block in self.view.exercise_blocks:
             self._remove_all_exercises_in_block(block)
         while self.view.exercise_blocks:
             self.view.remove_last_block()
 
     def _remove_all_exercises_in_block(self, block):
-        # while block.exercises:
         while block.get_exercises():
             block.remove_last_exercise()
 
