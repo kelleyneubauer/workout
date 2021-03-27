@@ -6,6 +6,8 @@ Workout builder is a desktop application for building custom workouts with Tkint
 
 <img src="/img/workout_builder_screenshot.png">
 
+[Try on repli.it (warning: it's ugly and glitchy)](https://repl.it/@kelleyneubauer/workout)
+
 ---
 
 **Features:**
