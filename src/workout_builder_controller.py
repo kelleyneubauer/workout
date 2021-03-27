@@ -14,11 +14,9 @@ class Controller:
         self.view = wbv.View(self.root)
         self._bind_launch_screen_events()
 
-    def _bind_launch_screen_events(self):
-        self._bind_button(self.view.get_save_widget(), self._save_workout)
-        self._bind_button(self.view.get_load_widget(), self._load_workout)
-        self._bind_button(self.view.get_add_block_widget(), self._add_block)
-        self._bind_button(self.view.get_remove_block_widget(), self._remove_block)
+    def run(self):
+        self.root.title('KELLEY\'S WORKOUT BUILDER')
+        self.root.mainloop()
 
     def _bind_button(self, button, handler):
         button.bind('<Button>', handler)
@@ -26,11 +24,11 @@ class Controller:
     def _bind_combobox(self, combobox, handler):
         combobox.bind('<<ComboboxSelected>>', handler)
 
-    def _add_block(self, event=None):
-        self.view.add_block()
-        new_block = self.view.get_last_block()
-        self._bind_block_events(new_block)
-        return self.view.get_last_block()
+    def _bind_launch_screen_events(self):
+        self._bind_button(self.view.get_save_widget(), self._save_workout)
+        self._bind_button(self.view.get_load_widget(), self._load_workout)
+        self._bind_button(self.view.get_add_block_widget(), self._add_block)
+        self._bind_button(self.view.get_remove_block_widget(), self._remove_block)
 
     def _bind_block_events(self, block):
         self._bind_button(block.get_add_exercise_widget(),
@@ -39,13 +37,6 @@ class Controller:
         self._bind_button(block.get_remove_exercise_widget(),
                           lambda event, group=block:
                           self._remove_exercise(event, group))
-
-    def _add_exercise(self, event, block):
-        block.add_exercise()
-        new_exercise = block.get_last_exercise()
-        self._bind_exercise_events(new_exercise)
-        self._initialize_exercise_comboboxes(new_exercise)
-        return block.get_last_exercise()
 
     def _bind_exercise_events(self, exercise):
         self._bind_button(exercise.get_clear_widget(),
@@ -61,26 +52,39 @@ class Controller:
                             lambda event, group=exercise:
                             self._exercise_name_onclick(event, group))
 
-    def _initialize_exercise_comboboxes(self, exercise):
-        exercise.set_classification_values(self.model.get_exercise_categories())
-        exercise.set_name_values(self.model.get_exercise_names())
-        exercise.set_link_values([])
-
-    def _remove_exercise(self, event, block):
-        block.remove_last_exercise()
+    def _add_block(self, event=None):
+        self.view.add_block()
+        new_block = self.view.get_last_block()
+        self._bind_block_events(new_block)
+        return self.view.get_last_block()
 
     def _remove_block(self, event):
         self.view.remove_last_block()
 
     def _remove_all_blocks(self):
-        while self.view.get_blocks():
+        while self.view.get_all_blocks():
             self.view.remove_last_block()
+
+    def _add_exercise(self, event, block):
+        block.add_exercise()
+        new_exercise = block.get_last_exercise()
+        self._bind_exercise_events(new_exercise)
+        self._initialize_exercise_comboboxes(new_exercise)
+        return block.get_last_exercise()
+
+    def _remove_exercise(self, event, block):
+        block.remove_last_exercise()
+
+    def _initialize_exercise_comboboxes(self, exercise):
+        exercise.set_classification_values(self.model.get_exercise_categories())
+        exercise.set_name_values(self.model.get_exercise_names())
+        exercise.set_link_values([])
 
     def _classification_onclick(self, event, exercise):
         exercise.set_name_text('')
         exercise.set_link_text('')
-        exercise.set_name_values(self.model.get_exercises_of_category(
-                                            exercise.get_classification_text()))
+        exercise.set_name_values(self.model.get_filtered_exercise_names(
+                                 exercise.get_classification_text()))
 
     def _exercise_name_onclick(self, event, exercise):
         exercise.set_link_text('')
@@ -112,8 +116,8 @@ class Controller:
                                     'reps',
                                     'intensity',
                                     'link'])
-            for block_number, block in enumerate(self.view.get_blocks(), start=1):
-                for exercise_number, exercise in enumerate(block.get_exercises(), start=1):
+            for block_number, block in enumerate(self.view.get_all_blocks(), start=1):
+                for exercise_number, exercise in enumerate(block.get_all_exercises(), start=1):
                     output_writer.writerow([block_number,
                                             exercise_number,
                                             block.get_block_name(),
@@ -143,7 +147,3 @@ class Controller:
                 new_exercise.set_reps_text(row['reps'])
                 new_exercise.set_intensity_text(row['intensity'])
                 new_exercise.set_link_text(row['link'])
-
-    def run(self):
-        self.root.title('KELLEY\'S WORKOUT BUILDER')
-        self.root.mainloop()
