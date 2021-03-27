@@ -1,4 +1,4 @@
-# KELLEY'S WORKOUT BUILDER
+# WORKOUT BUILDER
 
 ### Kelley Neubauer
 
