@@ -2,7 +2,7 @@
 
 ### Kelley Neubauer
 
-Workout builder is a desktop application for building custom workouts with Tkinter
+Workout builder is tool designed to help coaches build workouts for clients using a clean Tkinter GUI.
 
 <img src="/img/workout_builder_screenshot.png">
 
