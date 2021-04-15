@@ -37,6 +37,10 @@ class View:
     def get_workout_name(self):
         return self._ent_header_name.get()
 
+    def set_workout_name(self, value):
+        self._ent_header_name.delete(0, 'end')
+        self._ent_header_name.insert(0, value)
+
     def get_remove_block_widget(self):
         return self._btn_remove_block
 

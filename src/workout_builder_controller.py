@@ -1,6 +1,7 @@
 #!usr/bin/env python3
 
 import tkinter as tk
+from tkinter import filedialog as fd
 import csv
 import webbrowser
 import workout_builder_model as wbm
@@ -130,8 +131,9 @@ class Controller:
 
     def _load_workout(self, event):
         self._remove_all_blocks()
-        filename = self.view.get_workout_name()
-        with open(filename + '.csv', 'r') as infile:
+        filename = fd.askopenfilename()
+        self.view.set_workout_name(filename.split('/')[-1][:-4])
+        with open(filename, 'r') as infile:
             data = csv.DictReader(infile, delimiter=',')
             current_block_num = 0
             current_block = None
