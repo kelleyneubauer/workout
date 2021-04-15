@@ -105,47 +105,54 @@ class Controller:
         self._initialize_exercise_comboboxes(exercise)
 
     def _save_workout(self, event):
-        filename = self.view.get_workout_name()
-        with open(filename + '.csv', mode='w', newline='') as outfile:
-            output_writer = csv.writer(outfile, delimiter=',')
-            output_writer.writerow(['block number',
-                                    'exercise number',
-                                    'block name',
-                                    'classification',
-                                    'exercise name',
-                                    'sets',
-                                    'reps',
-                                    'intensity',
-                                    'link'])
-            for block_number, block in enumerate(self.view.get_all_blocks(), start=1):
-                for exercise_number, exercise in enumerate(block.get_all_exercises(), start=1):
-                    output_writer.writerow([block_number,
-                                            exercise_number,
-                                            block.get_block_name(),
-                                            exercise.get_classification_text(),
-                                            exercise.get_name_text(),
-                                            exercise.get_sets_text(),
-                                            exercise.get_reps_text(),
-                                            exercise.get_intensity_text(),
-                                            exercise.get_link_text()])
+        workout_name = self.view.get_workout_name()
+        filename = fd.asksaveasfilename(defaultextension='.csv',
+                                        initialfile=workout_name,
+                                        filetypes=[('CSV file', '*.csv'),
+                                                   ('Text file', '*.txt')])
+        if filename:
+            with open(filename, mode='w', newline='') as outfile:
+                output_writer = csv.writer(outfile, delimiter=',')
+                output_writer.writerow(['block number',
+                                        'exercise number',
+                                        'block name',
+                                        'classification',
+                                        'exercise name',
+                                        'sets',
+                                        'reps',
+                                        'intensity',
+                                        'link'])
+                for block_number, block in enumerate(self.view.get_all_blocks(), start=1):
+                    for exercise_number, exercise in enumerate(block.get_all_exercises(), start=1):
+                        output_writer.writerow([block_number,
+                                                exercise_number,
+                                                block.get_block_name(),
+                                                exercise.get_classification_text(),
+                                                exercise.get_name_text(),
+                                                exercise.get_sets_text(),
+                                                exercise.get_reps_text(),
+                                                exercise.get_intensity_text(),
+                                                exercise.get_link_text()])
 
     def _load_workout(self, event):
         self._remove_all_blocks()
-        filename = fd.askopenfilename()
-        self.view.set_workout_name(filename.split('/')[-1][:-4])
-        with open(filename, 'r') as infile:
-            data = csv.DictReader(infile, delimiter=',')
-            current_block_num = 0
-            current_block = None
-            for row in data:
-                if current_block_num != row['block number']:
-                    current_block = self._add_block()
-                    current_block.set_block_name(row['block name'])
-                    current_block_num = row['block number']
-                new_exercise = self._add_exercise(None, current_block)
-                new_exercise.set_classification_text(row['classification'])
-                new_exercise.set_name_text(row['exercise name'])
-                new_exercise.set_sets_text(row['sets'])
-                new_exercise.set_reps_text(row['reps'])
-                new_exercise.set_intensity_text(row['intensity'])
-                new_exercise.set_link_text(row['link'])
+        filename = fd.askopenfilename(filetypes=[('CSV file', '*.csv'),
+                                                 ('Text file', '*.txt')])
+        if filename:
+            self.view.set_workout_name(filename.split('/')[-1][:-4])
+            with open(filename, 'r') as infile:
+                data = csv.DictReader(infile, delimiter=',')
+                current_block_num = 0
+                current_block = None
+                for row in data:
+                    if current_block_num != row['block number']:
+                        current_block = self._add_block()
+                        current_block.set_block_name(row['block name'])
+                        current_block_num = row['block number']
+                    new_exercise = self._add_exercise(None, current_block)
+                    new_exercise.set_classification_text(row['classification'])
+                    new_exercise.set_name_text(row['exercise name'])
+                    new_exercise.set_sets_text(row['sets'])
+                    new_exercise.set_reps_text(row['reps'])
+                    new_exercise.set_intensity_text(row['intensity'])
+                    new_exercise.set_link_text(row['link'])
